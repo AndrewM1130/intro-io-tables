@@ -1,0 +1,127 @@
+---
+title: "Probabilistic Graphical Modeling of Supply-Side Shocks"
+author: "Mark Oussoren, Andrej Leban, Tzu Leung, Andrew Ma"
+date: "11/12/2021"
+output:
+  pdf_document:
+    number_sections: yes
+    extra_dependencies: ["float", "subfig"]
+bibliography: bib.bib
+citation_package: biblatex
+biblio-style: ieee
+header-includes:
+- \usepackage{subfig}
+- \usepackage{placeins}
+- \usepackage{float}
+- \floatplacement{figure}{H}
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE}
+# load in useful packages
+library(ggplot2)
+library(corrplot)
+library(ggpubr)
+library(gridExtra)
+library(plotly)
+library(tidyverse)
+library(patchwork)
+library(RColorBrewer)
+library(class)
+library(caret)
+library(cowplot)
+library(dplyr)
+library(timetk)
+
+# set default knitr chunk
+knitr::opts_chunk$set(
+  echo = FALSE, 
+  warning = FALSE, 
+  message = FALSE,  
+  cache = FALSE, 
+  fig.width = 4,  
+  fig.height = 2.25, 
+  out.height = '75%',
+  out.width = '75%', 
+  fig.align = "center",  
+  fig.pos = "h")
+knitr::knit_hooks$set(plot = function(x, options)  {
+  paste0(knitr::hook_plot_tex(x, options), "\n\\FloatBarrier\n")
+})
+
+# set working directory
+setwd("~/Economic_Networks/")
+
+# load data for eda - I'm doing time series here 
+future_eda <- read.csv('data/processed/futures_eda.csv')
+io_eda <- read.csv('data/processed/io_eda.csv')
+
+# load the actual data
+io_current <- read.csv('data/processed/io_current.csv')
+io_new <- read.csv('data/processed/io_new.csv')
+io_old <- read.csv('data/processed/io_old.csv')
+futures <- read.csv('data/processed/futures.csv')
+```
+
+```{r crosscor, eval =  TRUE, echo = FALSE, message = FALSE, warning = FALSE, cache = FALSE, fig.height = 5, fig.width = 8, fig.subcap=c("Petroleum and Coal Products Output vs. Crude Oil Futures", "Farms Output vs. Soybean Futures", fig.ncol = 2)}
+# setting figures
+par(mfrow = c(1, 2))
+
+# plotting crude oil against petroleum
+x1 <- io_eda %>% 
+  select(year, Name, Petroleum.and.coal.products) %>%
+  filter(Name == 'Total Industry Output') %>%
+  select(Petroleum.and.coal.products)
+y1 <- future_eda$crude
+ccf(x1, y1, 
+    lag.max = 300,
+    main = NA,
+    ylab = "Cross Correlation")
+
+# plotting farms against futures data
+x2 <- io_eda %>% 
+  select(year, Name, Farms) %>%
+  filter(Name == 'Total Industry Output') %>%
+  select(Farms)
+y2 <- future_eda$soybean
+ccf(x2, y2, 
+    lag.max = 300,
+    main = NA,
+    ylab = "Cross Correlation")
+```
+
+# Introduction
+
+Insert objective, abstract summary, and purpose of paper.
+
+# Exploratory Data Analysis
+
+## Data Overview
+
+Here we read in the data
+
+## Data Cleaning
+
+Describe cleaning
+
+## Exploratory Graphing
+
+Here we would like to compare the time-series structures of the futures data against the IO Output data we have. 
+
+
+# Modeling
+
+Insert models
+
+# Stability Analysis
+
+Insert stability of findings - check alternative data sources, cleaning techniques, etc.
+
+# Post-Hoc Exploratory Data Analysis
+
+Insert EDA post-modeling - maybe exclude.
+
+# Concluding Remarks
+
+Insert conclusions
+
+# References
